@@ -4,7 +4,7 @@ class Play extends Phaser.Scene {
     }
 
     create() {
-        // running checks
+        // running checkss
         console.log('%cPLAY SCENE :^)', testColor)
 
         cursors = this.input.keyboard.createCursorKeys()
@@ -15,7 +15,7 @@ class Play extends Phaser.Scene {
         this.customerZoneTwo = this.add.rectangle(0, height / 3, width, height / 3, 0x00ff00, .25).setOrigin(0);
         this.customerZoneThree = this.add.rectangle(0, (height / 3) * 2, width, height / 3, 0x0000ff, .25).setOrigin(0);
 
-        this.cup = new Cup(this, centerX, centerY, null, -900, .75);
+        this.cup = new Cup(this, centerX, 0, 'can', 800).setScale(2);
 
         this.nappy = this.add.circle(centerX, centerY, 128/3, 0x668800)
 
@@ -28,6 +28,7 @@ class Play extends Phaser.Scene {
 
         this.input.on('pointerdown', () => {
             console.log('pointerdown')
+            this.cup.launch();
         })
     }
 
