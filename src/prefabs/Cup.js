@@ -1,29 +1,25 @@
 class Cup extends Phaser.Physics.Arcade.Sprite{
-  constructor(scene, x, y, texture, velocityY = 5, dragY = .75){
+  constructor(scene, x, y, texture, velocityY = 500, dragY = 150){
     super(scene, x, y, texture, 0);
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
     this.velocityY = new Phaser.Math.Vector2(0, velocityY);
     this.dragY = dragY;
-    this.body.setBounce(0,1);
-    this.setCollideWorldBounds = true;
+    this.body.setBounce(.2);
+    this.body.collideWorldBounds = true;
   }
 
-  create(){
-    //launch self in direction with drag lolz
-    this.body.setVelocity(this.velocityY);
-    this.body.setAcceleration(100);
+  launch(){
     this.body.setDragY(this.dragY);
+    this.body.velocity.add(this.velocityY);
   }
 
-  setVelocity(velocity){
+  updateVelocity(velocity){
     this.velocityY = new Phaser.Math.Vector2(0, velocity);
-    this.body.velocity.y = velocity;
   }
 
-  setDrag(drag){
+  updateDrag(drag){
     this.dragY = drag;
-    this.body.setDragY(drag);
   }
 }

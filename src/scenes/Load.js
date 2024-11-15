@@ -5,6 +5,7 @@ class Load extends Phaser.Scene {
 
     preload() {
         // loading bar
+        this.load.image('can', './assets/images/can.png');
         this.load.image('bar', './assets/images/bar-bg.png')
         this.load.image('customer', './assets/images/ugly-hand.png')
 
@@ -27,6 +28,7 @@ class Load extends Phaser.Scene {
     create() {
         // running checks
         console.log('%cLOAD SCENE :^)', testColor)
+        console.log('pepe poopoo');
         // moving through
         this.scene.start('playScene')
     }
