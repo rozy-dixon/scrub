@@ -8,16 +8,17 @@ class Play extends Phaser.Scene {
         console.log('%cPLAY SCENE :^)', testColor)
 
         cursors = this.input.keyboard.createCursorKeys()
-        this.bar = this.add.rectangle(width / 3, 0, (width / 3) * 2, height, 0x666666).setOrigin(0);
+
+        this.bar = this.add.image(centerX, centerY, 'bar').setOrigin(.5)
 
         // -------------------------------------- visualizations
-        this.customerZoneOne = this.add.rectangle(0, 0, width, height / 3, 0xff0000, .25).setOrigin(0);
-        this.customerZoneTwo = this.add.rectangle(0, height / 3, width, height / 3, 0x00ff00, .25).setOrigin(0);
-        this.customerZoneThree = this.add.rectangle(0, (height / 3) * 2, width, height / 3, 0x0000ff, .25).setOrigin(0);
+        this.customerZoneOne = this.add.rectangle(0, 0, width, height / 3, 0xff0000, .03).setOrigin(0);
+        this.customerZoneTwo = this.add.rectangle(0, height / 3, width, height / 3, 0x00ff00, .03).setOrigin(0);
+        this.customerZoneThree = this.add.rectangle(0, (height / 3) * 2, width, height / 3, 0x0000ff, .03).setOrigin(0);
 
         this.cup = new Cup(this, centerX, centerY, null, -900, .75);
 
-        this.nappy = this.add.circle(centerX, centerY, 128/3, 0x668800)
+        this.nappy = this.add.image(centerX, centerY, 'rag').setOrigin(.5).setScale(3)
 
         // -------------------------------------- scrubby inputs
 
@@ -29,6 +30,8 @@ class Play extends Phaser.Scene {
         this.input.on('pointerdown', () => {
             console.log('pointerdown')
         })
+
+        this.customer = new Customer(this, centerX, height - 200).setOrigin(.5)
     }
 
     update() {
