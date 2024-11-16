@@ -38,7 +38,7 @@ class Play extends Phaser.Scene {
             this.cup.launch();
         })
         
-        this.customer = new Customer(this, centerX, height - 200).setOrigin(.5)
+        this.customer = new Customer(this, centerX - 250, height - 200).setOrigin(0.5)
 
         this.physics.add.collider(this.cup, this.customer);
         this.physics.world.on('collide', this.evaluateToss, this);
