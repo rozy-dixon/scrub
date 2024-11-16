@@ -34,7 +34,6 @@ class Play extends Phaser.Scene {
         })
 
         this.input.on('pointerdown', () => {
-            console.log('pointerdown')
             this.cup.launch();
         })
         
@@ -45,29 +44,36 @@ class Play extends Phaser.Scene {
         
         this.lastMouseX = this.input.mousePointer.x;
         this.lastMouseTime = this.time.now;
+
+        this.uiDisplay = false;
     }
 
     evaluateToss(cup, customer){
         // if cup velocity in successful range, stop it, show aww yea, despawn both things
         // else, create spill,
-        if(Math.abs(cup.body.velocity.y) < this.SUCCESS_MAX_VELOCITY){
+        if (this.uiDisplay) return;
+
+        if (Math.abs(cup.body.velocity.y) < this.SUCCESS_MAX_VELOCITY) {
+            this.uiDisplay = true;
             cup.body.setVelocityY(0);
-            let soundfx = this.sound.add(this.THANK_YOUS[Math.floor(Math.random()*2)])
+            let soundfx = this.sound.add(this.THANK_YOUS[Math.floor(Math.random() * 2)]);
             soundfx.play();
             let popup = this.add.image(customer.x, customer.y, 'success');
             soundfx.once('complete', () => {
+                this.uiDisplay = false;
                 popup.destroy();
                 this.resetCup(cup);
-            })
-        }
-        else{
-            let soundfx = this.sound.add('fail')
+            });
+        } else {
+            this.uiDisplay = true;
+            let soundfx = this.sound.add('fail');
             soundfx.play();
             let popup = this.add.image(customer.x, customer.y, 'failure');
             soundfx.once('complete', () => {
+                this.uiDisplay = false;
                 popup.destroy();
                 this.resetCup(cup);
-            })
+            });
         }
     }
 
@@ -87,12 +93,12 @@ class Play extends Phaser.Scene {
                 this.lastSpeed = Math.abs(deltaX / deltaTime);
 
                 if (this.lastSpeed < 1) {
-                    this.lastSpeed = 1.5
+                    this.lastSpeed = 1;
                 }
             }
         }
 
-        return this.lastSpeed || 1.5;
+        return this.lastSpeed || 1;
     }
 
     resetCup(cup) {
