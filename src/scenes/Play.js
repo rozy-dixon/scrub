@@ -22,7 +22,7 @@ class Play extends Phaser.Scene {
         this.customerZoneTwo = this.add.rectangle(0, height / 3, width, height / 3, 0x00ff00, .03).setOrigin(0);
         this.customerZoneThree = this.add.rectangle(0, (height / 3) * 2, width, height / 3, 0x0000ff, .03).setOrigin(0);
 
-        this.cup = new Cup(this, centerX, 0, 'cup', 500)
+        this.cup = new Cup(this, centerX, 100, 'cup', 500)
 
         this.nappy = this.add.image(centerX, centerY, 'rag').setOrigin(.5).setScale(3).setInteractive({ draggable: true })
 
@@ -42,12 +42,14 @@ class Play extends Phaser.Scene {
 
         this.physics.add.collider(this.cup, this.customer);
         this.physics.world.on('collide', this.evaluateToss, this);
+        
+        this.lastMouseX = this.input.mousePointer.x;
+        this.lastMouseTime = this.time.now;
     }
 
     evaluateToss(cup, customer){
-        //if cup velocity in successful range, stop it, show aww yea, despawn both things
+        // if cup velocity in successful range, stop it, show aww yea, despawn both things
         // else, create spill,
-        console.log(cup.body.velocity.y);
         if(Math.abs(cup.body.velocity.y) < this.SUCCESS_MAX_VELOCITY){
             cup.body.setVelocityY(0);
             let soundfx = this.sound.add(this.THANK_YOUS[Math.floor(Math.random()*2)])
@@ -55,6 +57,7 @@ class Play extends Phaser.Scene {
             let popup = this.add.image(customer.x, customer.y, 'success');
             soundfx.once('complete', () => {
                 popup.destroy();
+                this.resetCup(cup);
             })
         }
         else{
@@ -63,14 +66,49 @@ class Play extends Phaser.Scene {
             let popup = this.add.image(customer.x, customer.y, 'failure');
             soundfx.once('complete', () => {
                 popup.destroy();
+                this.resetCup(cup);
             })
         }
-        console.log(cup.body.velocity.y)
-        console.log(cup);
-        console.log(customer);
-        //at end, spawn new cup and new hand
     }
 
+    getCursorSpeed(pointer) {
+        // src = https://chatgpt.com/share/673816a6-5498-800d-812f-943c45542a0b
+        let currentMouseX = pointer.x;
+        let currentTime = this.time.now;
+
+        let deltaTime = currentTime - this.lastMouseTime;
+
+        if (deltaTime > 100) {
+            let deltaX = currentMouseX - this.lastMouseX;
+            this.lastMouseX = currentMouseX;
+            this.lastMouseTime = currentTime;
+
+            if (deltaTime > 0) {
+                this.lastSpeed = Math.abs(deltaX / deltaTime);
+
+                if (this.lastSpeed < 1) {
+                    this.lastSpeed = 1.5
+                }
+            }
+        }
+
+        return this.lastSpeed || 1.5;
+    }
+
+    resetCup(cup) {
+        cup.y = 100
+    }     
+
     update() {
+        if (this.input.activePointer.isDown && this.nappy.y > this.cup.y + 100 && this.nappy.y < this.cup.y + 500) {
+            this.cup.setVelocityY(this.getCursorSpeed(this.input.activePointer) * 200);
+        }
+
+        if (this.cup.body.velocity.y == 0) {
+            this.time.delayedCall(800, () => {
+                if (this.cup.body.velocity.y == 0)
+                this.resetCup(this.cup);
+            });
+        }
     }
 }
