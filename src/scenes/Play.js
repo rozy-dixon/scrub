@@ -10,7 +10,7 @@ class Play extends Phaser.Scene {
     }
 
     create() {
-        // running checkss
+        // running checks
         console.log('%cPLAY SCENE :^)', testColor)
 
         cursors = this.input.keyboard.createCursorKeys()
@@ -27,7 +27,6 @@ class Play extends Phaser.Scene {
         this.nappy = this.add.image(centerX, centerY, 'rag').setOrigin(.5).setScale(3).setInteractive({ draggable: true })
 
         // -------------------------------------- scrubby inputs
-
         this.input.on('pointermove', (event) => {
             this.nappy.x = event.x
             this.nappy.y = event.y
@@ -54,27 +53,35 @@ class Play extends Phaser.Scene {
         if (this.uiDisplay) return;
 
         if (Math.abs(cup.body.velocity.y) < this.SUCCESS_MAX_VELOCITY) {
-            this.uiDisplay = true;
-            cup.body.setVelocityY(0);
-            let soundfx = this.sound.add(this.THANK_YOUS[Math.floor(Math.random() * 2)]);
-            soundfx.play();
-            let popup = this.add.image(customer.x, customer.y, 'success');
-            soundfx.once('complete', () => {
-                this.uiDisplay = false;
-                popup.destroy();
-                this.resetCup(cup);
-            });
+            this.displaySuccess(cup, customer)
         } else {
-            this.uiDisplay = true;
-            let soundfx = this.sound.add('fail');
-            soundfx.play();
-            let popup = this.add.image(customer.x, customer.y, 'failure');
-            soundfx.once('complete', () => {
-                this.uiDisplay = false;
-                popup.destroy();
-                this.resetCup(cup);
-            });
+            this.displayFail(cup, customer)
         }
+    }
+
+    displaySuccess(cup, element) {
+        this.uiDisplay = true;
+        cup.body.setVelocityY(0);
+        let soundfx = this.sound.add(this.THANK_YOUS[Math.floor(Math.random() * 2)]);
+        soundfx.play();
+        let popup = this.add.image(element.x, element.y, 'success');
+        soundfx.once('complete', () => {
+            this.uiDisplay = false;
+            popup.destroy();
+            this.resetCup(cup);
+        });
+    }
+
+    displayFail(cup, element) {
+        this.uiDisplay = true;
+        let soundfx = this.sound.add('fail');
+        soundfx.play();
+        let popup = this.add.image(element.x, element.y, 'failure');
+        soundfx.once('complete', () => {
+            this.uiDisplay = false;
+            popup.destroy();
+            this.resetCup(cup);
+        });
     }
 
     getCursorSpeed(pointer) {
@@ -106,14 +113,18 @@ class Play extends Phaser.Scene {
     }     
 
     update() {
-        if (this.input.activePointer.isDown && this.nappy.y > this.cup.y + 100 && this.nappy.y < this.cup.y + 500) {
+        if (this.input.activePointer.isDown &&
+            this.nappy.y > this.cup.y + 100 &&
+            this.nappy.y < this.cup.y + 500 &&
+            this.uiDisplay == false) {
             this.cup.setVelocityY(this.getCursorSpeed(this.input.activePointer) * 200);
         }
 
         if (this.cup.body.velocity.y == 0) {
             this.time.delayedCall(800, () => {
-                if (this.cup.body.velocity.y == 0)
-                this.resetCup(this.cup);
+                if (this.cup.body.velocity.y == 0) {
+                    this.resetCup(this.cup);
+                }
             });
         }
     }
