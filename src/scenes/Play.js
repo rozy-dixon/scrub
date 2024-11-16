@@ -64,7 +64,7 @@ class Play extends Phaser.Scene {
         cup.body.setVelocityY(0);
         let soundfx = this.sound.add(this.THANK_YOUS[Math.floor(Math.random() * 2)]);
         soundfx.play();
-        let popup = this.add.image(element.x, element.y, 'success');
+        let popup = this.add.image(element.body.x, element.y, 'success').setOrigin(0, .5);
         soundfx.once('complete', () => {
             this.uiDisplay = false;
             popup.destroy();
@@ -76,7 +76,7 @@ class Play extends Phaser.Scene {
         this.uiDisplay = true;
         let soundfx = this.sound.add('fail');
         soundfx.play();
-        let popup = this.add.image(element.x, element.y, 'failure');
+        let popup = this.add.image(element.body.x, element.y, 'failure').setOrigin(0, .5);
         soundfx.once('complete', () => {
             this.uiDisplay = false;
             popup.destroy();
