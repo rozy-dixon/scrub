@@ -8,6 +8,7 @@ class Cup extends Phaser.Physics.Arcade.Sprite{
     this.dragY = dragY;
     this.body.setBounce(.2);
     this.body.collideWorldBounds = true;
+    this.body.onCollide = true;
   }
 
   launch(){
