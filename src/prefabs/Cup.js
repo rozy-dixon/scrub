@@ -1,5 +1,5 @@
 class Cup extends Phaser.Physics.Arcade.Sprite{
-  constructor(scene, x, y, texture, velocityY = 400, dragY = 600){
+  constructor(scene, x, y, texture, velocityY = 400, dragY = 200){
     super(scene, x, y, texture, 0);
     scene.add.existing(this);
     scene.physics.add.existing(this);
