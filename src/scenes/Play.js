@@ -7,6 +7,21 @@ class Play extends Phaser.Scene {
         this.SUCCESS_MAX_VELOCITY = 100;
 
         this.THANK_YOUS = [ 'thank-you-1', 'thank-you-2' ]
+
+        this.OBSTACLES = {
+            'puddle': {
+                dragY: -100,
+                height: 10
+            },
+            'coaster':{
+                dragY: 500,
+                height: 50
+            },
+            'can':{
+                dragY: 100,
+                height: 25
+            }
+        }
     }
 
     create() {
@@ -25,6 +40,9 @@ class Play extends Phaser.Scene {
         this.cup = new Cup(this, centerX, 100, 'cup', 500)
 
         this.nappy = this.add.image(centerX, centerY, 'rag').setOrigin(.5).setScale(3).setInteractive({ draggable: true })
+
+        this.spawnObstacle(centerX, centerY+100);
+
 
         // -------------------------------------- scrubby inputs
         this.input.on('pointermove', (event) => {
@@ -45,6 +63,9 @@ class Play extends Phaser.Scene {
         this.lastMouseTime = this.time.now;
 
         this.uiDisplay = false;
+
+        this.physics.add.overlap(this.cup, this.obstacle);
+        this.physics.world.once('overlap', this.overlapObstacle, this);
     }
 
     evaluateToss(cup, customer){
@@ -110,7 +131,23 @@ class Play extends Phaser.Scene {
 
     resetCup(cup) {
         cup.y = 100
-    }     
+    }
+
+    overlapObstacle(cup, obstacle){
+        cup.body.setDragY(cup.body.drag.y + obstacle.dragY);
+    }
+
+    spawnObstacle(x, y){
+        let obstacleType = Object.keys(this.OBSTACLES)[Math.floor(Math.random() * 3)];
+        let obstacle = new Obstacle(
+            this, x, y, obstacleType, this.OBSTACLES[obstacleType].dragY)
+                .setOrigin(.5)
+                .setScale(3)
+                .setBodySize(50, this.OBSTACLES[obstacleType].height);
+        this.children.moveBelow(obstacle, this.cup);
+        this.physics.add.overlap(this.cup, obstacle);
+        this.physics.world.once('overlap', this.overlapObstacle, this);
+    }
 
     update() {
         if (this.input.activePointer.isDown &&
