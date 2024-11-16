@@ -15,6 +15,7 @@ class Load extends Phaser.Scene {
         // obstacles
         this.load.image('puddle', './assets/images/puddle.png')
         this.load.image('coaster', './assets/images/coaster.png')
+        this.load.image('can', './assets/images/can.png')
         
         // cup
         this.load.image('cup', './assets/images/cup.png')
