@@ -22,7 +22,7 @@ class Play extends Phaser.Scene {
         this.customerZoneTwo = this.add.rectangle(0, height / 3, width, height / 3, 0x00ff00, .03).setOrigin(0);
         this.customerZoneThree = this.add.rectangle(0, (height / 3) * 2, width, height / 3, 0x0000ff, .03).setOrigin(0);
 
-        this.cup = new Cup(this, centerX, 0, 'cup', 10000)
+        this.cup = new Cup(this, centerX, 0, 'cup', 500)
 
         this.nappy = this.add.image(centerX, centerY, 'rag').setOrigin(.5).setScale(3).setInteractive({ draggable: true })
 
@@ -48,7 +48,7 @@ class Play extends Phaser.Scene {
         //if cup velocity in successful range, stop it, show aww yea, despawn both things
         // else, create spill,
         console.log(cup.body.velocity.y);
-        if(cup.body.velocity.y < this.SUCCESS_MAX_VELOCITY){
+        if(Math.abs(cup.body.velocity.y) < this.SUCCESS_MAX_VELOCITY){
             cup.body.setVelocityY(0);
             let soundfx = this.sound.add(this.THANK_YOUS[Math.floor(Math.random()*2)])
             soundfx.play();
